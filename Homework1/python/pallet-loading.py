@@ -19,129 +19,111 @@ class Pallet:
     def __init__(self,  dimension, position):
         self.dimension = dimension
         self.position = position
-        self.startX = position.x
-        self.endX = position.x + dimension.x
-        self.startY = position.y
-        self.endY = position.y + dimension.y
+        self.start_x = position.x
+        self.end_x = position.x + dimension.x
+        self.start_y = position.y
+        self.end_y = position.y + dimension.y
 
 
-def sortArea(val: Dimension):
-    return val.area
+def sort_area(dimension):
+    return dimension.area
 
 
-def readInput():
-    storeParameters = input()
-    slicedParams = storeParameters.split('\t')
-    storeDimensions = Dimension(int(slicedParams[1]), int(slicedParams[0]), 0)
-    pillars = int(input().split()[0])
-    pallets = int(input().split()[0])
-    pillarArray = []
-    for x in range(storeDimensions.x):
+def read_input():
+    store_parameters = input()
+    sliced_parameters = store_parameters.split('\t')
+    store_dimensions = Dimension(int(sliced_parameters[1]), int(sliced_parameters[0]), 0)
+    pillar_count = int(input().split()[0])
+    pallet_count = int(input().split()[0])
+    pillar_array = []
+    for _ in range(store_dimensions.x):
         row = []
-        for y in range(storeDimensions.y):
+        for _ in range(store_dimensions.y):
             row.append(0)
-        pillarArray.append(row)
-    for i in range(pillars):
-        inputArray = input().split('\t')
-        pillarArray[int(inputArray[0])][int(inputArray[1])] = 1
-    palletDimensions = []
-    for i in range(pallets):
-        inputArray = input().split('\t')
-        palletDimensions.append(Dimension(
-            int(inputArray[1]), int(inputArray[0]), i+1))
-    palletDimensions.sort(key=sortArea, reverse=True)
-    output = []
-    for x in range(storeDimensions.x):
+        pillar_array.append(row)
+    for i in range(pillar_count):
+        input_array = input().split('\t')
+        pillar_array[int(input_array[0])][int(input_array[1])] = 1
+    pallet_dimensions = []
+    for i in range(pallet_count):
+        input_array = input().split('\t')
+        pallet_dimensions.append(Dimension(
+            int(input_array[1]), int(input_array[0]), i+1))
+    pallet_dimensions.sort(key=sort_area, reverse=True)
+    output_array = []
+    for _ in range(store_dimensions.x):
         row = []
-        for y in range(storeDimensions.y):
+        for _ in range(store_dimensions.y):
             row.append(0)
-        output.append(row)
-    return storeDimensions, pillarArray, palletDimensions, output
+        output_array.append(row)
+    return store_dimensions, pillar_array, pallet_dimensions, output_array
 
 
-def checkBorders(pallet: Pallet, storeDim: Dimension):
-    if(pallet.position.x+pallet.dimension.x > storeDim.x) or (pallet.position.y+pallet.dimension.y > storeDim.y):
+def check_borders(pallet, store_dimensions):
+    if(pallet.position.x+pallet.dimension.x > store_dimensions.x) or (pallet.position.y+pallet.dimension.y > store_dimensions.y):
         return False
     return True
 
 
-def checkPillars(pallet: Pallet, pillars: int):
-    palletStartX = pallet.position.x
-    palletEndX = pallet.position.x + pallet.dimension.x
-    palletStartY = pallet.position.y
-    palletEndY = pallet.position.y + pallet.dimension.y
-    for x in range(palletStartX + 1, palletEndX):
-        for y in range(palletStartY + 1, palletEndY):
-            if(pillars[x][y] != 0):
+def check_pillars(pallet, pillar_positions):
+    for x in range(pallet.start_x + 1, pallet.end_x):
+        for y in range(pallet.start_y + 1, pallet.end_y):
+            if(pillar_positions[x][y] != 0):
                 return False
     return True
 
 
-def checkPallets(pallet: Pallet, output: int):
-    pStartX = pallet.position.x
-    pEndX = pallet.position.x + pallet.dimension.x
-    pStartY = pallet.position.y
-    pEndY = pallet.position.y + pallet.dimension.y
-    for x in range(pStartX, pEndX):
-        for y in range(pStartY, pEndY):
-            if(output[x][y] != 0):
+def check_pallets(pallet, output_array):
+    for x in range(pallet.start_x, pallet.end_x):
+        for y in range(pallet.start_y, pallet.end_y):
+            if(output_array[x][y] != 0):
                 return False
     return True
 
 
-def addToArray(pallet: Pallet, output: int):
-    pStartX = pallet.position.x
-    pEndX = pallet.position.x + pallet.dimension.x
-    pStartY = pallet.position.y
-    pEndY = pallet.position.y + pallet.dimension.y
-    id = pallet.dimension.id
-    for x in range(pStartX, pEndX):
-        for y in range(pStartY, pEndY):
-            output[x][y] = id
-    return output
+def add_to_output_array(pallet, output_array):
+    for x in range(pallet.start_x, pallet.end_x):
+        for y in range(pallet.start_y, pallet.end_y):
+            output_array[x][y] = pallet.dimension.id
+    return output_array
 
 
-def removeFromArray(pallet: Pallet, output: int):
-    pStartX = pallet.position.x
-    pEndX = pallet.position.x + pallet.dimension.x
-    pStartY = pallet.position.y
-    pEndY = pallet.position.y + pallet.dimension.y
-    id = pallet.dimension.id
-    for x in range(pStartX, pEndX):
-        for y in range(pStartY, pEndY):
-            output[x][y] = 0
-    return output
+def remove_from_output_array(pallet, output_array):
+    for x in range(pallet.start_x, pallet.end_x):
+        for y in range(pallet.start_y, pallet.end_y):
+            output_array[x][y] = 0
+    return output_array
 
 
-def place(palletDims: Dimension, pillarPositions: int, output: int, storeDimensions: Dimension, i: int):
-    for x in range(storeDimensions.x):
-        for y in range(storeDimensions.y):
-            if(output[x][y] == 0):
+def place(pallet_dimensions, pillar_positions, output_array, store_dimensions, recursion_depth):
+    for x in range(store_dimensions.x):
+        for y in range(store_dimensions.y):
+            if(output_array[x][y] == 0):
                 pos = Position(x, y)
-                pallet = Pallet(palletDims[i], pos)
-                if(checkBorders(pallet, storeDimensions) and checkPillars(pallet, pillarPositions) and checkPallets(pallet, output)):
-                    output = addToArray(pallet, output)
-                    if(i == len(palletDims) - 1):
-                        output = addToArray(pallet, output)
+                pallet = Pallet(pallet_dimensions[recursion_depth], pos)
+                if(check_borders(pallet, store_dimensions) and check_pillars(pallet, pillar_positions) and check_pallets(pallet, output_array)):
+                    output_array = add_to_output_array(pallet, output_array)
+                    if(recursion_depth == len(pallet_dimensions) - 1):
+                        output_array = add_to_output_array(pallet, output_array)
                         return True
-                    if(place(palletDims, pillarPositions, output, storeDimensions, i + 1)):
+                    if(place(pallet_dimensions, pillar_positions, output_array, store_dimensions, recursion_depth + 1)):
                         return True
-                    output = removeFromArray(pallet, output)
-                rotatedPallet = Pallet(
+                    output_array = remove_from_output_array(pallet, output_array)
+                rotated_pallet = Pallet(
                     Dimension(pallet.dimension.y, pallet.dimension.x, pallet.dimension.id), pos)
-                if(checkBorders(rotatedPallet, storeDimensions) and checkPillars(rotatedPallet, pillarPositions) and checkPallets(rotatedPallet, output)):
-                    output = addToArray(rotatedPallet, output)
-                    if(i == len(palletDims) - 1):
-                        output = addToArray(rotatedPallet, output)
+                if(check_borders(rotated_pallet, store_dimensions) and check_pillars(rotated_pallet, pillar_positions) and check_pallets(rotated_pallet, output_array)):
+                    output_array = add_to_output_array(rotated_pallet, output_array)
+                    if(recursion_depth == len(pallet_dimensions) - 1):
+                        output_array = add_to_output_array(rotated_pallet, output_array)
                         return True
-                    if(place(palletDims, pillarPositions, output, storeDimensions, i + 1)):
+                    if(place(pallet_dimensions, pillar_positions, output_array, store_dimensions, recursion_depth + 1)):
                         return True
-                    output = removeFromArray(rotatedPallet, output)
+                    output_array = remove_from_output_array(rotated_pallet, output_array)
     return False
 
 
-def printOutput(output: int):
-    for row in output:
+def print_output_array(output_array):
+    for row in output_array:
         string = ""
         index = 0
         for z in row:
@@ -157,12 +139,12 @@ def main():
         fd = open('input.txt', 'r')
         sys.stdin = fd
 
-    storeDimensions, pillarArray, palletDimensions, output = readInput()
+    store_dimensions, pillars_array, pallet_dimensions, output_array = read_input()
 
-    if(len(palletDimensions) > 0):
-        place(palletDimensions, pillarArray, output, storeDimensions, 0)
+    if(len(pallet_dimensions) > 0):
+        place(pallet_dimensions, pillars_array, output_array, store_dimensions, 0)
 
-    printOutput(output)
+    print_output_array(output_array)
 
 
 main()
