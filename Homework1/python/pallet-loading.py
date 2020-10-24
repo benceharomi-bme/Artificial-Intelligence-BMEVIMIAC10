@@ -80,6 +80,10 @@ def check_pallets(pallet, output_array):
                 return False
     return True
 
+def check_everything(pallet, store_dimensions, pillar_positions, output_array):
+    if(check_borders(pallet, store_dimensions) and check_pillars(pallet, pillar_positions) and check_pallets(pallet, output_array)):
+        return True
+    return False
 
 def add_to_output_array(pallet, output_array):
     for x in range(pallet.start_x, pallet.end_x):
@@ -99,9 +103,9 @@ def place(pallet_dimensions, pillar_positions, output_array, store_dimensions, r
     for x in range(store_dimensions.x):
         for y in range(store_dimensions.y):
             if(output_array[x][y] == 0):
-                pos = Position(x, y)
-                pallet = Pallet(pallet_dimensions[recursion_depth], pos)
-                if(check_borders(pallet, store_dimensions) and check_pillars(pallet, pillar_positions) and check_pallets(pallet, output_array)):
+                pallet_position = Position(x, y)
+                pallet = Pallet(pallet_dimensions[recursion_depth], pallet_position)
+                if(check_everything(pallet, store_dimensions, pillar_positions, output_array)):
                     output_array = add_to_output_array(pallet, output_array)
                     if(recursion_depth == len(pallet_dimensions) - 1):
                         output_array = add_to_output_array(pallet, output_array)
@@ -110,8 +114,8 @@ def place(pallet_dimensions, pillar_positions, output_array, store_dimensions, r
                         return True
                     output_array = remove_from_output_array(pallet, output_array)
                 rotated_pallet = Pallet(
-                    Dimension(pallet.dimension.y, pallet.dimension.x, pallet.dimension.id), pos)
-                if(check_borders(rotated_pallet, store_dimensions) and check_pillars(rotated_pallet, pillar_positions) and check_pallets(rotated_pallet, output_array)):
+                    Dimension(pallet.dimension.y, pallet.dimension.x, pallet.dimension.id), pallet_position)
+                if(check_everything(rotated_pallet, store_dimensions, pillar_positions, output_array)):
                     output_array = add_to_output_array(rotated_pallet, output_array)
                     if(recursion_depth == len(pallet_dimensions) - 1):
                         output_array = add_to_output_array(rotated_pallet, output_array)
