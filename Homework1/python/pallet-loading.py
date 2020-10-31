@@ -151,4 +151,5 @@ def main():
     print_output_array(output_array)
 
 
-main()
+if __name__ == '__main__':
+    main()
