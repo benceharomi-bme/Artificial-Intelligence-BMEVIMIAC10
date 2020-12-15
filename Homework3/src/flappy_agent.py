@@ -9,7 +9,7 @@ class FlappyAgent:
         self.q_table = np.zeros([*observation_space_size, len(action_space)])
         self.env_action_space = action_space
         self.n_iterations = n_iterations
-        self.alfa = 0.9
+        self.alfa = 1.0
 
         self.test = False
 
