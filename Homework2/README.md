@@ -21,3 +21,6 @@ python3 ./src/bn.py FILE
 ```
 
 Some example inputs and associated outputs can be found in the `bn_examples` folder.
+
+## Review
+8/12 solution
