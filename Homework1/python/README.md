@@ -11,3 +11,5 @@ If you would like to load the input from the `input.txt` then simply add the `FI
 ```
 python3 pallet-loading.py FILE
 ```
+## Review
+12/12 solution
