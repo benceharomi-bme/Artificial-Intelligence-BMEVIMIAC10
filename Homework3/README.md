@@ -17,3 +17,6 @@ You can start the GUI with this command:
 ```
 python3 ./src/flappy_gui.py
 ```
+
+## Review
+12/12 solution
